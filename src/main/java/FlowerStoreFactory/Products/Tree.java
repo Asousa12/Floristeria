@@ -2,26 +2,24 @@ package FlowerStoreFactory.Products;
 
 import FlowerStore.Interfaces.GardenElements;
 
-public class Flower implements GardenElements {
+public class Tree implements GardenElements {
 
     private String name;
     private int idProduct;
-    private String color;
+    private String size;
     private double price;
 
-    public Flower(String name, int idProduct, String color, double price){
+    public Tree(String name, int idProduct, String size, double price) {
         this.name=name;
         this.idProduct=idProduct;
-        this.color=color;
+        this.size=size;
         this.price=price;
     }
+
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public Flower(String characteristic, double price) {
     }
 
     @Override
@@ -31,7 +29,7 @@ public class Flower implements GardenElements {
 
     @Override
     public String getCharacteristics() {
-        return color;
+        return size;
     }
 
     @Override

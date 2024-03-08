@@ -1,21 +1,38 @@
 package FlowerStoreFactory.Products;
 
-import FlowerStoreFactory.Interfaces.GardenElements;
+import FlowerStore.Interfaces.GardenElements;
 
 public class Decoration implements GardenElements {
 
+    private String name;
+    private int idProduct;
     private String typeMaterial;
-    public Decoration(String typeMaterial){
+    private double price;
+
+    public Decoration(String name, int idProduct, String typeMaterial, double price){
+        this.name=name;
+        this.idProduct=idProduct;
         this.typeMaterial=typeMaterial;
+        this.price=price;
     }
 
     @Override
-    public void displayCharacteristics() {
-        System.out.println("The type of material is: " + typeMaterial);
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void getPrice(double price) {
-        System.out.println("The price of material is: " + price);
+    public int getIdProduct() {
+        return idProduct;
+    }
+
+    @Override
+    public String getCharacteristics() {
+        return typeMaterial;
+    }
+
+    @Override
+    public double getPrice() {
+        return price;
     }
 }
