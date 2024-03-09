@@ -1,0 +1,10 @@
+use FlowerShopsBBDD;
+SELECT * FROM FlowerShops;
+SELECT * FROM GardenElements WHERE IdGardenElements = ?;
+SELECT * FROM GardenElements inner join FlowerShops WHERE IdFlowerShop = ?;
+INSERT INTO FlowerShops (Name) VALUES (?);
+UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ?;
+UPDATE Stock SET idStock = ? WHERE GardenElementsId = ?;
+UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ?;
+SELECT * FROM Ticket WHERE FlowerShopId = ?;
+INSERT INTO Ticket (FlowerShopId, TotalPrice) VALUES (?,?);
