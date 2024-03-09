@@ -122,30 +122,35 @@ public class GardenElementsMySQL<T extends GardenElements> implements GenericDAO
 
     @Override
     public List<GardenElements> allGardenElements(int idFlowerStore) {
-        List<GardenElements> gardenElements = new ArrayList<>();
-        connectMySQL();
-        String query = "SELECT * FROM GardenElements";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        List<GardenElements> elements = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM GardenElements WHERE IdGardenElements = ?")) {
             pstmt.setInt(1, idFlowerStore);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
 
-                GardenElements gardenElement = new GardenElementImpl(
-                        rs.getInt("IdGardenElements"),
-                        rs.getInt("TypesId"),
-                        rs.getString("Features")
-
-                );
-                gardenElements.add(gardenElement);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String type = rs.getString("TypeName");
+                    switch (type.toUpperCase()) {
+                        case "FLOWER":
+                            elements.add(new Flower(rs.getString("name"), rs.getInt("idProduct"), rs.getString("color"), rs.getDouble("price")));
+                            break;
+                        case "TREE":
+                            elements.add(new Tree(rs.getString("name"), rs.getInt("idProduct"), rs.getString("size"), rs.getDouble("price")));
+                            break;
+                        case "DECORATION":
+                            elements.add(new Decoration(rs.getString("name"), rs.getInt("idProduct"), rs.getString("typeMaterial"), rs.getDouble("price")));
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Invalid type: " + type);
+                    }
+                }
             }
         } catch (SQLException e) {
+            // Handle exception gracefully
             e.printStackTrace();
-        } finally {
-            disconnectMySQL();
         }
-        return gardenElements;
+        return elements;
     }
-
 
     @Override
     public int createStore(String name) {

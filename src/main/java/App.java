@@ -1,29 +1,57 @@
 import Connections.MySQL.GardenElementsMySQL;
 import FlowerStore.FlowerStore;
 
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Set;
 
 public class App {
     static Scanner input = new Scanner(System.in);
-    private static GardenElementsMySQL gardenElementsDAO = null;
-
+    private static GardenElementsMySQL gardenElementsMySQL = new GardenElementsMySQL<>();
     private static FlowerStore flowerStore;
+    private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
+
+    static HashMap<Integer, String> showFlowerStores(){
+        try {
+            listaFlowerStores = gardenElementsMySQL.showFlowerStore();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listaFlowerStores;
+
+    }
+    static void runApp(){
+        if(listaFlowerStores.isEmpty()){
+            createFlowerStore();
+
+
+        }else{
+            Set<Integer>listaId = listaFlowerStores.keySet();
+            for(Integer id : listaId){
+                String value = listaFlowerStores.get(id);
+                System.out.println("Id: " + id + " Nombre: " + value);
+            }
+            pedirDatoInt("Please indicate the ID of the flower shop you want to work with.");
+        }
+
+    }
+
     static void runProgram() {
         boolean seguirBucle;
         do {
 
             seguirBucle = menu(pedirDatoInt("Indicate number option:\n"
                     + "0.Exit\n"
-                    + "1.Create flowerstore\n"
-                    + "2.Insert a tree, flower or decoration to stock\n"
-                    + "3.Remove a tree, flower or decoration from stock\n"
-                    + "4.Print the stock of all the trees, flowers and decorations\n"
-                    + "5.Print the stock with quantities\n"
-                    + "6.Print total value of flowerstore\n"
-                    + "7.Create tickets with multiples objects\n"
-                    + "8.Show a list of old purchases\n"
-                    + "9.View the total money earned from all sales\n"));
+                    + "1.Insert a tree, flower or decoration to stock\n"
+                    + "2.Remove a tree, flower or decoration from stock\n"
+                    + "3.Print the stock of all the trees, flowers and decorations\n"
+                    + "4.Print the stock with quantities\n"
+                    + "5.Print total value of flowerstore\n"
+                    + "6.Create tickets with multiples objects\n"
+                    + "7.Show a list of old purchases\n"
+                    + "8.View the total money earned from all sales\n"));
         }while(seguirBucle);
     }
     static boolean menu(int opcion) {
@@ -58,9 +86,10 @@ public class App {
     }
     static void createFlowerStore(){
         String nameStore = pedirNombre("Indicate the name of flowerStore");
-        int id = gardenElementsDAO.createStore(nameStore);
+        int id = gardenElementsMySQL.createStore(nameStore);
         flowerStore = new FlowerStore(nameStore, id);
-        //No necesita return, ya modifica el objeto global (edu)
+        System.out.println("FlowerStore " + nameStore + "is created" );
+
     }
 
 
