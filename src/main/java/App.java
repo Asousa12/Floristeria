@@ -9,8 +9,9 @@ import java.util.Set;
 
 public class App {
     static Scanner input = new Scanner(System.in);
-    private static GardenElementsMySQL gardenElementsMySQL = new GardenElementsMySQL<>();
+    public static GardenElementsMySQL <?> gardenElementsMySQL = new GardenElementsMySQL<>();
     private static FlowerStore flowerStore;
+    private static int flowerStoreId;
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
 
     static HashMap<Integer, String> showFlowerStores(){
@@ -19,26 +20,29 @@ public class App {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        Set<Integer> listaId = listaFlowerStores.keySet();
+        System.out.println("Here are the available flower stores");
+        for(Integer id : listaId){
+            String value = listaFlowerStores.get(id);
+            System.out.println("El id: " + id + " Nombre: " + value);
+        }
         return listaFlowerStores;
 
     }
     static void runApp(){
-        if(listaFlowerStores.isEmpty()){
+        showFlowerStores();
+        if (listaFlowerStores.isEmpty()) {
+            System.out.println("You have not created any FlowerStore");
             createFlowerStore();
+        } else {
+            flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
 
-
-        }else{
-            Set<Integer>listaId = listaFlowerStores.keySet();
-            for(Integer id : listaId){
-                String value = listaFlowerStores.get(id);
-                System.out.println("Id: " + id + " Nombre: " + value);
-            }
-            pedirDatoInt("Please indicate the ID of the flower shop you want to work with.");
         }
 
     }
 
     static void runProgram() {
+        System.out.println("Working with FlowerStore ID: " + flowerStoreId);
         boolean seguirBucle;
         do {
 
@@ -51,7 +55,8 @@ public class App {
                     + "5.Print total value of flowerstore\n"
                     + "6.Create tickets with multiples objects\n"
                     + "7.Show a list of old purchases\n"
-                    + "8.View the total money earned from all sales\n"));
+                    + "8.View the total money earned from all sales\n"
+                    + "9.Remove FlowerStore\n"));
         }while(seguirBucle);
     }
     static boolean menu(int opcion) {
@@ -61,7 +66,7 @@ public class App {
                 seguirBucle = false;
                 System.out.println("You have exited the menu");
                 break;
-            case 1: createFlowerStore();
+            case 1: insertProduct();
                 break;
             case 2: ;
                 break;
@@ -77,7 +82,7 @@ public class App {
                 break;
             case 8:
                 break;
-            case 9:
+            case 9: removeFlowerStore();
                 break;
             default:
         }
@@ -85,15 +90,34 @@ public class App {
 
     }
     static void createFlowerStore(){
-        String nameStore = pedirNombre("Indicate the name of flowerStore");
-        int id = gardenElementsMySQL.createStore(nameStore);
+        String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
+        int id = 0;
+        try {
+            id = gardenElementsMySQL.createStore(nameStore);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         flowerStore = new FlowerStore(nameStore, id);
         System.out.println("FlowerStore " + nameStore + "is created" );
+        //gardenElementsMySQL.close();
+    }
+    static void insertProduct(){
+        String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
+        switch (type.toUpperCase()) {
+        }
+    }
+    static void removeFlowerStore(){
+        showFlowerStores();
+        try {
+            gardenElementsMySQL.removeFlowerStore(pedirDatoInt("Qué id quieres borrar?"));
 
+        } catch (SQLException e) {
+            throw new RuntimeException("Error removing FlowerStore", e);
+        }
     }
 
 
-    static double pedirDato(String mensaje) {
+    static double pedirDatoDouble(String mensaje) {
         boolean correcto = true;
         double opcion = 0;
         while (correcto) {

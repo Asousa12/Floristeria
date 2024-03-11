@@ -4,21 +4,21 @@ import FlowerStore.Interfaces.GardenElements;
 
 public class Decoration implements GardenElements {
 
-    private String name;
+    private int quantity;
     private int idProduct;
     private String typeMaterial;
     private double price;
 
-    public Decoration(String name, int idProduct, String typeMaterial, double price){
-        this.name=name;
+    public Decoration(int quantity, int idProduct, String typeMaterial, double price){
+        this.quantity=quantity;
         this.idProduct=idProduct;
         this.typeMaterial=typeMaterial;
         this.price=price;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public int getQuantity() {
+        return quantity;
     }
 
     @Override
@@ -34,5 +34,15 @@ public class Decoration implements GardenElements {
     @Override
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public void setQuantity(int quantity) {
+        this.quantity=quantity;
+    }
+
+    @Override
+    public void setPrice(double price) {
+        this.price=price;
     }
 }

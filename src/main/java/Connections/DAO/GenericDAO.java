@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface GenericDAO<T> {
         HashMap<Integer,String> showFlowerStore() throws SQLException;
-        GardenElements findById(int id);
+        GardenElements findById(int id) throws SQLException;
         List<GardenElements> allGardenElements(int idFlowerStore);
-        int createStore(String name);
+        int createStore(String name) throws SQLException;
         void addStock(GardenElements gardenElement, int quantity);
         void updateStock(GardenElements gardenElement, int quantity);
         void deleteStock(GardenElements gardenElement);
