@@ -1,25 +1,20 @@
 import Connections.MySQL.GardenElementsMySQL;
 import FlowerStore.FlowerStore;
+import FlowerStore.Interfaces.GardenElements;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class App {
     static Scanner input = new Scanner(System.in);
-    public static GardenElementsMySQL <?> gardenElementsMySQL = new GardenElementsMySQL<>();
+    public static GardenElementsMySQL gardenElementsMySQL = new GardenElementsMySQL();
     private static FlowerStore flowerStore;
     private static int flowerStoreId;
     private static HashMap<Integer, String> listaFlowerStores = new HashMap<>();
 
     static HashMap<Integer, String> showFlowerStores(){
-        try {
-            listaFlowerStores = gardenElementsMySQL.showFlowerStore();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+        listaFlowerStores = gardenElementsMySQL.showFlowerStore();
         Set<Integer> listaId = listaFlowerStores.keySet();
         System.out.println("Here are the available flower stores");
         for(Integer id : listaId){
@@ -36,7 +31,6 @@ public class App {
             createFlowerStore();
         } else {
             flowerStoreId = pedirDatoInt("Please indicate the ID of the flower shop you want to work with:");
-
         }
 
     }
@@ -92,19 +86,27 @@ public class App {
     static void createFlowerStore(){
         String nameStore = pedirNombreSoloLetras("Dime un nombre para la floristeria");
         int id = 0;
-        try {
-            id = gardenElementsMySQL.createStore(nameStore);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        id = gardenElementsMySQL.createStore(nameStore);
         flowerStore = new FlowerStore(nameStore, id);
+        List<GardenElements> products = gardenElementsMySQL.allGardenElements(id);
+        gardenElementsMySQL.addStock(id, products);
         System.out.println("FlowerStore " + nameStore + "is created" );
         //gardenElementsMySQL.close();
     }
     static void insertProduct(){
-        String type = pedirNombreSoloLetras("Qué quieres añadir? Flower, tree or decotation?");
-        switch (type.toUpperCase()) {
+        int num = 1;
+        List<GardenElements> listaElements = new ArrayList<>();
+        listaElements = gardenElementsMySQL.allGardenElements(flowerStoreId);
+        System.out.println("Disponemos de estos productos: ");
+        for(GardenElements element : listaElements){
+            System.out.println(element);
+          ;
         }
+        int idProduct = pedirDatoInt("Indica el idProduct que quieres añadir al stock:");
+        int quantity = pedirDatoInt("Ahora añade la cantidad:");
+        //gardenElementsMySQL.updateStock(idProduct, quantity, price);
+        System.out.println("Se han añadido " + quantity + " productos al stock de la floristería " + flowerStoreId);
+
     }
     static void removeFlowerStore(){
         showFlowerStores();

@@ -13,7 +13,13 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("mysql:mysql-connector-java:8.0.33")
-    //implementation("com.zaxxer:HikariCP:5.1.0")
+
+    implementation("org.mongodb:bson:5.0.0")
+    implementation("org.mongodb:mongodb-driver-core:5.0.0")
+    implementation("org.mongodb:mongodb-driver-sync:5.0.0")
+    implementation("org.mongodb:mongodb-driver-legacy:5.0.0")
+
+//implementation("com.zaxxer:HikariCP:5.1.0")
     //implementation("org.slf4j:slf4j-api:2.0.12")
     //implementation("ch.qos.logback:logback-classic:1.5.3")
 }

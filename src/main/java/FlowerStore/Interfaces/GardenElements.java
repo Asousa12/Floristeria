@@ -9,4 +9,6 @@ public interface GardenElements {
 
    void setQuantity(int quantity);
    void setPrice(double price);
+   String toString();
+
 }

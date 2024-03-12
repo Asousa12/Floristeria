@@ -46,4 +46,13 @@ public class Tree implements GardenElements {
     public void setPrice(double price) {
         this.price=price;
     }
+
+    @Override
+    public String toString() {
+        return "Tree:" + "->" +
+                " Quantity: " + quantity  +
+                " idProduct: " + idProduct  +
+                " Size: " + size +
+                " Price: " + price;
+    }
 }
