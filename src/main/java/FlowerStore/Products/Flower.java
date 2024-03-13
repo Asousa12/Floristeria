@@ -1,4 +1,4 @@
-package FlowerStoreFactory.Products;
+package FlowerStore.Products;
 
 import FlowerStore.Interfaces.GardenElements;
 

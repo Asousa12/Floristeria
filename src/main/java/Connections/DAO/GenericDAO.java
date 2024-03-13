@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface GenericDAO {
+        void connect();
+        void disconnect();
         HashMap<Integer,String> showFlowerStore();
         GardenElements findById(int id);
         List<GardenElements> allGardenElements(int idFlowerStore);
@@ -18,4 +20,6 @@ public interface GenericDAO {
         void deleteStock(GardenElements gardenElement);
         HashMap<Integer, Date> allTickets(int idFlowerStore);
         void addTicket(int idFlowerstore, HashMap<Integer,Integer> gardenElementsList);
+        void removeFlowerStore(int flowerStoreId);
+        double TotalPrice();
 }

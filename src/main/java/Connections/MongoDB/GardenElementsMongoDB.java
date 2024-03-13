@@ -13,7 +13,6 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,7 +32,7 @@ public class GardenElementsMongoDB implements GenericDAO {
             System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
-    private static void connectMongodb(){
+    public void connect(){
         try{
             if(mongoClient == null){
                 mongoClient = MongoClients.create(connectionString);
@@ -43,7 +42,7 @@ public class GardenElementsMongoDB implements GenericDAO {
             System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
-    private static void disconnectMongodb(){
+    public void disconnect(){
         try{
             if(mongoClient != null){
                 mongoClient.close();
@@ -70,6 +69,7 @@ public class GardenElementsMongoDB implements GenericDAO {
 
     @Override
     public int createStore(String name) {
+        connect();
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
         Document newFlowerShop;
         try {
@@ -131,6 +131,16 @@ public class GardenElementsMongoDB implements GenericDAO {
     @Override
     public HashMap<Integer, Date> allTickets(int idFlowerStore) {
         return null;
+    }
+
+    @Override
+    public void removeFlowerStore(int flowerStoreId) {
+
+    }
+
+    @Override
+    public double TotalPrice() {
+        return 0;
     }
 
     @Override

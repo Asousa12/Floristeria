@@ -1,20 +1,21 @@
-package FlowerStoreFactory.Products;
+package FlowerStore.Products;
 
 import FlowerStore.Interfaces.GardenElements;
 
-public class Decoration implements GardenElements {
+public class Tree implements GardenElements {
 
     private int quantity;
     private int idProduct;
-    private String typeMaterial;
+    private String size;
     private double price;
 
-    public Decoration(int quantity, int idProduct, String typeMaterial, double price){
+    public Tree(int quantity, int idProduct, String size, double price) {
         this.quantity=quantity;
         this.idProduct=idProduct;
-        this.typeMaterial=typeMaterial;
+        this.size=size;
         this.price=price;
     }
+
 
     @Override
     public int getQuantity() {
@@ -28,7 +29,7 @@ public class Decoration implements GardenElements {
 
     @Override
     public String getCharacteristics() {
-        return typeMaterial;
+        return size;
     }
 
     @Override
@@ -48,10 +49,10 @@ public class Decoration implements GardenElements {
 
     @Override
     public String toString() {
-        return "Decoration:" + "->" +
-                " Quantity: " + quantity +
-                " idProduct: " + idProduct +
-                " TypeMaterial: " + typeMaterial +
+        return "Tree:" + "->" +
+                " Quantity: " + quantity  +
+                " idProduct: " + idProduct  +
+                " Size: " + size +
                 " Price: " + price;
     }
 }

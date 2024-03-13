@@ -1,9 +1,9 @@
 package FlowerStore;
 
 import FlowerStore.Interfaces.GardenElements;
-import FlowerStoreFactory.Products.Decoration;
-import FlowerStoreFactory.Products.Flower;
-import FlowerStoreFactory.Products.Tree;
+import FlowerStore.Products.Decoration;
+import FlowerStore.Products.Flower;
+import FlowerStore.Products.Tree;
 
 public class FlowerStore {
     private String name;

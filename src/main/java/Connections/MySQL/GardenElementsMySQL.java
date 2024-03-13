@@ -3,9 +3,9 @@ package Connections.MySQL;
 import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
 import FlowerStore.Interfaces.GardenElements;
-import FlowerStoreFactory.Products.Decoration;
-import FlowerStoreFactory.Products.Flower;
-import FlowerStoreFactory.Products.Tree;
+import FlowerStore.Products.Decoration;
+import FlowerStore.Products.Flower;
+import FlowerStore.Products.Tree;
 
 import java.sql.*;
 import java.util.*;
@@ -26,8 +26,8 @@ public class GardenElementsMySQL implements GenericDAO {
         }
 
     }
-
-    private static void connectMySQL() {
+    @Override
+    public void connect() {
         try {
             if (connection == null) {
                 connection = DriverManager.getConnection(URL,Constants.MYSQL_USERNAME,Constants.MYSQL_PASSWORD);
@@ -38,8 +38,8 @@ public class GardenElementsMySQL implements GenericDAO {
         }
 
     }
-
-    private static void disconnectMySQL() {
+    @Override
+    public void disconnect() {
         if (connection != null) {
             try {
                 connection.close();
@@ -53,7 +53,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public HashMap<Integer, String> showFlowerStore() {
         HashMap<Integer, String> flowerStores = new HashMap<>();
-        connectMySQL();
+        connect();
         try{
             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM FlowerShops");
             ResultSet rs = pstmt.executeQuery();
@@ -69,7 +69,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public GardenElements findById(int id) {
         GardenElements gardenElement = null;
-        connectMySQL();
+        connect();
         String query = "SELECT * FROM GardenElements WHERE IdGardenElements = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
@@ -145,7 +145,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public int createStore(String name) {
         int newStoreId = -1;
-        connectMySQL();
+        connect();
         String query = "INSERT INTO FlowerShops (Name) VALUES (?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -165,7 +165,7 @@ public class GardenElementsMySQL implements GenericDAO {
 
     @Override
     public void addStock(int idFlowerStore, List<GardenElements> products) {
-        connectMySQL();
+        connect();
         String query = "insert into Stock (FlowerShopId,GardenElementsId,Quantity,Price) VALUES (?,?,?,?)";
         try {
             for (GardenElements prod : products) {
@@ -183,7 +183,7 @@ public class GardenElementsMySQL implements GenericDAO {
 
     @Override
     public void updateStock(GardenElements gardenElement, int quantity) {
-        connectMySQL();
+        connect();
         String query = "UPDATE Stock SET Quantity = Quantity + ? WHERE GardenElementsId = ? and FlowerStoreId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
@@ -198,7 +198,7 @@ public class GardenElementsMySQL implements GenericDAO {
 
     @Override
     public void deleteStock(GardenElements gardenElement) {
-        connectMySQL();
+        connect();
         String query = "UPDATE Stock SET Quantity = Quantity - ? WHERE GardenElementsId = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
@@ -213,7 +213,7 @@ public class GardenElementsMySQL implements GenericDAO {
     @Override
     public HashMap<Integer, Date> allTickets(int idFlowerStore) {
         HashMap<Integer, Date> tickets = new HashMap<>();
-        connectMySQL();
+        connect();
         String query = "SELECT * FROM Ticket WHERE FlowerShopId = ?";
 
         try {
@@ -233,7 +233,7 @@ public class GardenElementsMySQL implements GenericDAO {
 
     @Override
     public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
-        connectMySQL();
+        connect();
 
         String query = "INSERT INTO Ticket (FlowerShopId, TotalPrice) VALUES (?,?)";
 
@@ -250,7 +250,8 @@ public class GardenElementsMySQL implements GenericDAO {
             e.printStackTrace();
         }
     }
-    public void removeFlowerStore(int flowerStoreId) throws SQLException {
+    @Override
+    public void removeFlowerStore(int flowerStoreId) {
 
         String query = "DELETE FROM FlowerShops WHERE IdFlowerShop = ?";
 
@@ -265,12 +266,32 @@ public class GardenElementsMySQL implements GenericDAO {
                 System.out.println("FlowerStore with ID " + flowerStoreId + " has been deleted.");
             }
         } catch (SQLException e) {
-            throw new SQLException("Error removing FlowerStore with ID " + flowerStoreId, e);
+            System.out.println("Error removing FlowerStore with ID " + flowerStoreId);
+        }
+    }
+    @Override
+    public double TotalPrice(){
+        double totalMoneyEarned=0;
+        try {
+            String query = "SELECT SUM(TotalPrice) AS TotalMoneyEarned FROM Ticket";
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        totalMoneyEarned = rs.getDouble("TotalMoneyEarned");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disconnect(); // Desconectarse de la base de datos
         }
 
+        return totalMoneyEarned;
     }
-
 }
+
+
 
 
 
