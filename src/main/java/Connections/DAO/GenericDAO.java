@@ -1,25 +1,22 @@
 package Connections.DAO;
 
+import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public interface GenericDAO {
-        void connect();
-        void disconnect();
-        HashMap<Integer,String> showFlowerStore();
+        List<FlowerStore> showFlowerStore();
         GardenElements findById(int id);
-        List<GardenElements> allGardenElements(int idFlowerStore);
-        int createStore(String name);
-        void addStock(int idFlowerStore, List<GardenElements> products);
-        void updateStock(GardenElements gardenElement, int quantity);
-        void deleteStock(GardenElements gardenElement);
-        HashMap<Integer, Date> allTickets(int idFlowerStore);
-        void addTicket(int idFlowerstore, HashMap<Integer,Integer> gardenElementsList);
-        void removeFlowerStore(int flowerStoreId);
-        double TotalPrice();
+        List<GardenElements> allGardenElements(String idFlowerStore);
+        String createStore(String name);
+        void addStock(String idFlowerStore, List<GardenElements> products);
+        void updateStock(String idFlowerStore, GardenElements gardenElements);
+        void deleteStock(String idFlowerStore, GardenElements gardenElements);
+        HashMap<Integer, Date> allTickets(String idFlowerStore);
+        void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList);
+        void removeFlowerStore(String flowerStoreId);
+        double totalPrice(String flowerStoreId);
 }

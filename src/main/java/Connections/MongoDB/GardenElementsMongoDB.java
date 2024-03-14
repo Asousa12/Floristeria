@@ -2,6 +2,7 @@ package Connections.MongoDB;
 
 import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
+import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
@@ -32,7 +33,7 @@ public class GardenElementsMongoDB implements GenericDAO {
             System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
-    public void connect(){
+    private static void connectMongodb(){
         try{
             if(mongoClient == null){
                 mongoClient = MongoClients.create(connectionString);
@@ -42,7 +43,7 @@ public class GardenElementsMongoDB implements GenericDAO {
             System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
-    public void disconnect(){
+    private static void disconnectMongodb(){
         try{
             if(mongoClient != null){
                 mongoClient.close();
@@ -53,7 +54,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     }
 
     @Override
-    public HashMap<Integer, String> showFlowerStore() {
+    public List<FlowerStore> showFlowerStore() {
         return null;
     }
 
@@ -63,15 +64,14 @@ public class GardenElementsMongoDB implements GenericDAO {
     }
 
     @Override
-    public List<GardenElements> allGardenElements(int idFlowerStore) {
+    public List<GardenElements> allGardenElements(String idFlowerStore) {
         return null;
     }
 
     @Override
-    public int createStore(String name) {
-        connect();
+    public String createStore(String name) {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
-        Document newFlowerShop;
+        Document newFlowerShop = new Document();
         try {
             List<Document> stock = new ArrayList<>();
             stock.add(new Document("type", "tree")
@@ -114,42 +114,54 @@ public class GardenElementsMongoDB implements GenericDAO {
         } catch (MongoException e) {
             System.err.println("Error al conectar a la base de datos: " + e.getMessage());
         }
-        //return newFlowerShop.get("_id");
-        return 0;
+        return newFlowerShop.getString("_id");
     }
 
     @Override
-    public void updateStock(GardenElements gardenElement, int quantity) {
-
-    }
-
-    @Override
-    public void deleteStock(GardenElements gardenElement) {
+    public void updateStock(String idFlowerStore, GardenElements gardenElements) {
 
     }
 
     @Override
-    public HashMap<Integer, Date> allTickets(int idFlowerStore) {
+    public void deleteStock(String idFlowerStore, GardenElements gardenElements) {
+
+    }
+
+    @Override
+    public HashMap<Integer, Date> allTickets(String idFlowerStore) {
         return null;
     }
 
     @Override
-    public void removeFlowerStore(int flowerStoreId) {
+    public void addTicket(FlowerStore flowerStore, List<GardenElements> gardenElementsList) {
+        MongoCollection<Document> collection = database.getCollection("Tickets");
+        List<Document> ticketInfoProd = new ArrayList<>();
+
+        for(GardenElements product : gardenElementsList){
+            ticketInfoProd.add(new Document("Type",product.getClass().getSimpleName())
+                    .append("Features", product.getCharacteristics())
+                    .append("Quantity", product.getQuantity())
+                    .append("Price", product.getPrice()));
+        }
+        Document newTicket = new Document("_id", new ObjectId())
+                .append("date", new Date())
+                .append("FlowerStore", flowerStore.getName())
+                .append("products", ticketInfoProd);
+        InsertOneResult result = collection.insertOne(newTicket);
+    }
+
+    @Override
+    public void removeFlowerStore(String flowerStoreId) {
 
     }
 
     @Override
-    public double TotalPrice() {
+    public double totalPrice(String flowerStoreId) {
         return 0;
     }
 
     @Override
-    public void addTicket(int idFlowerstore, HashMap gardenElementsList) {
-
-    }
-
-    @Override
-    public void addStock(int idFlowerStore, List<GardenElements> products) {
+    public void addStock(String idFlowerStore, List<GardenElements> products) {
 
     }
 }

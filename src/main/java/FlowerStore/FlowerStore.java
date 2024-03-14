@@ -7,17 +7,17 @@ import FlowerStore.Products.Tree;
 
 public class FlowerStore {
     private String name;
-    private int id;
-    public FlowerStore(String name, int id){
-        this.name = name;
+    private String id;
+    public FlowerStore(String id, String name){
         this.id = id;
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -31,9 +31,9 @@ public class FlowerStore {
                 "name='" + name + '\'' +
                 '}';
     }
-
+    //ToDo: Hay que usar esto para construir nuestros elementos, asi es una fabrica bien hecha
     public GardenElements getElement(String type, String characteristic, double price, int id, int quantity) {
-        GardenElements element = null;
+        GardenElements element;
         switch(type.toUpperCase()) {
             case "FLOWER" -> element = new Flower(quantity,id, characteristic, price);
             case "DECORATION" -> element = new Decoration(quantity,id, characteristic, price);

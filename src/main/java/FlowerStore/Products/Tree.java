@@ -39,7 +39,7 @@ public class Tree implements GardenElements {
 
     @Override
     public void setQuantity(int quantity) {
-        this.quantity=quantity;
+        this.quantity = quantity;
     }
 
     @Override
@@ -49,10 +49,6 @@ public class Tree implements GardenElements {
 
     @Override
     public String toString() {
-        return "Tree:" + "->" +
-                " Quantity: " + quantity  +
-                " idProduct: " + idProduct  +
-                " Size: " + size +
-                " Price: " + price;
+        return "Tree:" + "->" + " Size: " + size + " Quantity: " + quantity + " Price: " + price;
     }
 }

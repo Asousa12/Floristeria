@@ -38,7 +38,7 @@ public class Decoration implements GardenElements {
 
     @Override
     public void setQuantity(int quantity) {
-        this.quantity=quantity;
+        this.quantity = quantity;
     }
 
     @Override
@@ -48,10 +48,6 @@ public class Decoration implements GardenElements {
 
     @Override
     public String toString() {
-        return "Decoration:" + "->" +
-                " Quantity: " + quantity +
-                " idProduct: " + idProduct +
-                " TypeMaterial: " + typeMaterial +
-                " Price: " + price;
+        return "Decoration:" + "->" + " TypeMaterial: " + typeMaterial + " Quantity: " + quantity +  " Price: " + price;
     }
 }
