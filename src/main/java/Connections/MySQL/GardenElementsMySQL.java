@@ -72,7 +72,11 @@ public class GardenElementsMySQL implements GenericDAO {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    elements.add(flowerStore.createElement(rs.getInt("IdGardenElements"),rs.getInt("idType"),rs.getString("TypeName"),rs.getString("features"),rs.getDouble("Price"),rs.getInt("Quantity")));
+                    try{
+                        elements.add(flowerStore.createElement(rs.getInt("IdGardenElements"),rs.getInt("idType"),rs.getString("TypeName"),rs.getString("features"),rs.getDouble("Price"),rs.getInt("Quantity")));
+                    }catch (IllegalArgumentException e){
+                        System.out.println("Error: " + e.getMessage());
+                    }
                 }
             }
         } catch (SQLException e) {

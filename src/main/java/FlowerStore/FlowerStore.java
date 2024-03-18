@@ -20,6 +20,12 @@ public class FlowerStore {
         return name;
     }
 
+    public void setId(String id){
+        this.id=id;
+    }
+
+
+
     @Override
     public String toString() {
         return "FlowerStoreFactory{" +
@@ -35,7 +41,7 @@ public class FlowerStore {
         } else if (idType == 3 || nameType.equalsIgnoreCase("decoration")) {
             return new Decoration(idProduct,idType,nameType,features,price,quantity);
         } else {
-            return null;
+            throw new IllegalArgumentException("Tipo de elemento inválido: " + nameType);
         }
     }
 }

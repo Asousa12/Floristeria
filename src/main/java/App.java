@@ -1,18 +1,21 @@
 import Connections.DAO.GenericDAO;
 import Connections.DAO.ManagerDAO;
+import Connections.MongoDB.GardenElementsMongoDB;
 import Connections.MySQL.GardenElementsMySQL;
 import Exceptions.NotValidOptionException;
 import Exceptions.InputControl;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
+import Ticket.ShopCart;
 
 import java.util.*;
 
 
 
 public class App {
-    public static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMySQL());
+    public static ManagerDAO managerDAO = new ManagerDAO(new GardenElementsMongoDB());
     private static FlowerStore flowerStore;
+    private static ShopCart shopCart = ShopCart.getInstance();
 
 
     public static void runApp(){
@@ -126,9 +129,11 @@ public class App {
                 if (price > 0) {
                     listaElements.get(opc).setPrice(price);
                 }
+                shopCart.addProductos(listaElements.get(opc), listaElements.get(opc).getQuantity());
                 managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
                 System.out.println("Se han añadido " + listaElements.get(opc).getQuantity() + " productos al stock de la floristería " + flowerStore.getName());
                 waitForContinue();
+
             } else {
                 throw new NotValidOptionException("Incorrect option!");
             }
@@ -142,6 +147,7 @@ public class App {
         for(int i = 0; i < listaElements.size(); i++){
             System.out.println((i+1) + ". " + listaElements.get(i).toString());
         }
+
         try {
             int opc = InputControl.requestIntData("Indicate the product you want to remove the stock:") - 1;
             boolean flag = false;
@@ -157,6 +163,7 @@ public class App {
             } else {
                 throw new NotValidOptionException("Incorrect option!");
             }
+            shopCart.removeProducto(listaElements.get(opc), listaElements.get(opc).getQuantity());
             managerDAO.deleteStockManager(flowerStore.getId(), listaElements.get(opc));
             System.out.println(stockRemove + " products have been deleted from the " + flowerStore.getName() + " florist's stock.");
             waitForContinue();
@@ -189,23 +196,33 @@ public class App {
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
-        flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
+        //flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
         List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore);
 
         System.out.println("The garden elements available are: ");
 
-        for (GardenElements gardenElements : gardenElementsList) {
-            System.out.println(gardenElements);
+        for (int i = 0; i < gardenElementsList.size(); i++) {
+            System.out.println((i+1) + ". " + gardenElementsList.get(i));
         }
+
+
         boolean addInformation = true;
 
         while (addInformation) {
-            int productId = InputControl.requestIntData("Enter product ID:");
+            int productId = -1;
+
+            while(productId < 0 || productId >= gardenElementsList.size()){
+                productId = InputControl.requestIntData("Enter product ID:") - 1;
+            }
+
             int quantity = InputControl.requestIntData("Enter quantity:");
+
+            //quantity <= gardenElementsList.get(productId).getQuantity()
 
             for (GardenElements gardenElements : gardenElementsList) {
                 if (gardenElements.getIdProduct() == productId) {
                     gardenElements.setQuantity(gardenElements.getQuantity() + quantity);
+                    shopCart.addProductos(gardenElements, quantity);
                     break;
                 }
             }
@@ -213,10 +230,13 @@ public class App {
             String respuesta = entrada.next();
             addInformation = respuesta.equalsIgnoreCase("yes");
         }
+        shopCart.printTicket();
         managerDAO.newTicketManager(flowerStore, gardenElementsList);
+        //managerDAO.deleteStockManager();
         System.out.println("Ticket created successfully.");
         waitForContinue();
     }
+
     private static void oldPurchasesList(){
 
         HashMap<Integer, Date> tickets = managerDAO.showAllTicketsManager(flowerStore.getId());

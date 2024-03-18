@@ -50,12 +50,87 @@ public class GardenElementsMongoDB implements GenericDAO {
 
     @Override
     public List<FlowerStore> showFlowerStore() {
-        return null;
-    }
+        List<FlowerStore> flowerStores = new ArrayList<>();
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+        FindIterable<Document> documents = collection.find();
+
+        for (Document doc : documents) {
+//            FlowerStore flowerStore = new FlowerStore(doc.getObjectId("_id").toString(), doc.getString("name"));
+//            flowerStore.setId(doc.getObjectId("_id").toString());
+//            flowerStore.setName(doc.getString("name"));
+//
+//            flowerStores.add(flowerStore);
+
+
+            flowerStores.add(new FlowerStore(doc.getObjectId("_id").toString(), doc.getString("name")));
+        }
+
+        return flowerStores;
+        }
 
     @Override
     public List<GardenElements> allGardenElements(FlowerStore flowerStore) {
-        return null;
+        List<GardenElements> elements = new ArrayList<>();
+
+        MongoCollection<Document> collection = database.getCollection("FlowerShops");
+
+        Document query = new Document("_id", flowerStore.getId());
+        FindIterable<Document> results = collection.find(query);
+
+        //Document res = collection.find(query);
+        ArrayList<Document> stock = (ArrayList<Document>) results.first().get("stock");
+        for(Document stockIte : stock){
+            String type = stockIte.getString("type");
+            String features = stockIte.getString("Features");
+            int quantity = stockIte.getInteger("Quantity");
+            double price = stockIte.getDouble("Price");
+            try{
+                elements.add(flowerStore.createElement(0,0,type,features,price,quantity));
+            }catch (IllegalArgumentException e){
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+
+
+
+
+
+
+//        for (Document doc : results) {
+//            List<Document> stock = (List<Document>) doc.get("stock");
+//
+//            for (Document item : stock) {
+//                String type = item.getString("type");
+//                String features = item.getString("Features");
+//                int quantity = item.getInteger("Quantity");
+//                double price = item.getDouble("Price");
+//                try{
+//                    elements.add(flowerStore.createElement(0,0,type,features,price,quantity));
+//                }catch (IllegalArgumentException e){
+//                    System.out.println("Error: " + e.getMessage());
+//                }
+
+
+//                switch (type) {
+//                    case "tree":
+//                        Tree tree = new Tree(0, 0, "Tree", features, price, quantity);
+//                        elements.add(tree);
+//                        break;
+//                    case "flower":
+//                        Flower flower = new Flower(0, 0, "Flower", features, price, quantity);
+//                        elements.add(flower);
+//                        break;
+//                    case "decoration":
+//                        Decoration decoration = new Decoration(0, 0, "Decoration", features, price, quantity);
+//                        elements.add(decoration);
+//                        break;
+//                    default:
+//                        throw new IllegalArgumentException("Invalid type: " + type);
+//                }
+//            }
+//        }
+
+        return elements;
     }
 
     @Override
@@ -67,35 +142,35 @@ public class GardenElementsMongoDB implements GenericDAO {
             stock.add(new Document("type", "tree")
                     .append("Features", "3 m")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "tree")
                     .append("Features", "5 m")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "tree")
                     .append("Features", "50 cm")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "flower")
                     .append("Features", "Red")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "flower")
                     .append("Features", "Blue")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "flower")
                     .append("Features", "Green")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "decoration")
                     .append("Features", "Metal")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
             stock.add(new Document("type", "decoration")
                     .append("Features", "Plastic")
                     .append("Quantity", 0)
-                    .append("Price", 0));
+                    .append("Price", 0.0));
 
             newFlowerShop = new Document("_id", new ObjectId())
                     .append("name", name)
@@ -104,7 +179,8 @@ public class GardenElementsMongoDB implements GenericDAO {
         } catch (MongoException e) {
             System.out.println("Error al conectar a la base de datos: " + e.getMessage());
         }
-        return newFlowerShop.getString("_id");
+        ObjectId idFlowerStore = newFlowerShop.getObjectId("_id");
+        return idFlowerStore.toHexString();
     }
 
     @Override
@@ -178,7 +254,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     public void removeFlowerStore(String flowerStoreId) {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        Document query = new Document("_id", new ObjectId(flowerStoreId));
+        Document query = new Document("_id", flowerStoreId);
 
         collection.deleteOne(query);
 
@@ -188,7 +264,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     public double totalPrice(String flowerStoreId) {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        Document query = new Document("_id", new ObjectId(flowerStoreId));
+        Document query = new Document("_id", flowerStoreId);
         Document flowerShop = collection.find(query).first();
 
         List<Document> stock = (List<Document>) flowerShop.get("stock");
@@ -212,7 +288,7 @@ public class GardenElementsMongoDB implements GenericDAO {
 
                 Document gardenElementDocument = new Document();
                 gardenElementDocument.append("FlowerShopId", idFlowerStore)
-                        .append("GardenElementsId", prod.getIdProduct())
+                        .append("type", prod.getNameType())
                         .append("Quantity", prod.getQuantity())
                         .append("Price", prod.getPrice());
 
