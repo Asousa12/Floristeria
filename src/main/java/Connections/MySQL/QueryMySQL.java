@@ -2,8 +2,7 @@ package Connections.MySQL;
 
 public class QueryMySQL {
     public static final String ALLSHOPS_QUERY = "SELECT * FROM FlowerShops";
-    public static final String FINDBYID_QUERY = "SELECT * FROM GardenElements WHERE IdGardenElements = ?";
-    public static final String ALLSTOCK_QUERY = "SELECT * FROM GardenElements LEFT JOIN Stock ON GardenElements.idGardenElements = Stock.GardenElementsId AND Stock.FlowerShopId = ?;";
+    public static final String ALLSTOCK_QUERY = "SELECT * FROM (GardenElements LEFT JOIN Stock ON GardenElements.idGardenElements = Stock.GardenElementsId AND Stock.FlowerShopId = ?) inner join Type on GardenElements.TypesId = Type.idType";
     public static final String NEWSHOP_QUERY = "INSERT INTO FlowerShops (Name) VALUES (?)";
     public static final String ADDSTOCK_QUERY = "INSERT INTO Stock (FlowerShopId,GardenElementsId,Quantity,Price) VALUES (?,?,?,?)";
     public static final String UPDATESTOCK_QUERY = "UPDATE Stock SET Quantity = ?, Price = ? WHERE GardenElementsId = ? and FlowerShopId = ?";

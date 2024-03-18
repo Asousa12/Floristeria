@@ -4,32 +4,37 @@ import FlowerStore.Interfaces.GardenElements;
 
 public class Tree implements GardenElements {
 
-    private int quantity;
     private int idProduct;
-    private String size;
+    private int idType;
+    private String nameType;
+    private String features;
     private double price;
+    private int quantity;
 
-    public Tree(int quantity, int idProduct, String size, double price) {
-        this.quantity=quantity;
-        this.idProduct=idProduct;
-        this.size=size;
-        this.price=price;
-    }
-
-
-    @Override
-    public int getQuantity() {
-        return quantity;
+    public Tree(int idProduct, int idType, String nameType, String features, double price, int quantity) {
+        this.idProduct = idProduct;
+        this.idType = idType;
+        this.nameType = nameType;
+        this.features = features;
+        this.price = price;
+        this.quantity = quantity;
     }
 
     @Override
     public int getIdProduct() {
         return idProduct;
     }
-
     @Override
-    public String getCharacteristics() {
-        return size;
+    public int getIdType() {
+        return idType;
+    }
+    @Override
+    public String getNameType() {
+        return nameType;
+    }
+    @Override
+    public String getFeatures() {
+        return features;
     }
 
     @Override
@@ -38,17 +43,38 @@ public class Tree implements GardenElements {
     }
 
     @Override
+    public int getQuantity() {
+        return quantity;
+    }
+    @Override
+    public void setIdProduct(int idProduct) {
+        this.idProduct = idProduct;
+    }
+    @Override
+    public void setIdType(int idType) {
+        this.idType = idType;
+    }
+    @Override
+    public void setNameType(String nameType) {
+        this.nameType = nameType;
+    }
+    @Override
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    @Override
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    @Override
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
     @Override
-    public void setPrice(double price) {
-        this.price=price;
-    }
-
-    @Override
     public String toString() {
-        return "Tree:" + "->" + " Size: " + size + " Quantity: " + quantity + " Price: " + price;
+        return "Tree:" + "->" + " Size: " + features + " Quantity: " + quantity + " Price: " + price;
     }
 }

@@ -60,11 +60,4 @@ public class InputControl {
         }
         return nombre;
     }
-
-    public static String askName(String mensaje) {
-        Scanner input = new Scanner(System.in);
-        System.out.println(mensaje);
-        String nombre = input.nextLine();
-        return nombre;
-    }
 }

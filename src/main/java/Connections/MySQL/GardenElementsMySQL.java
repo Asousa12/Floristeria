@@ -4,9 +4,6 @@ import Connections.DAO.Constants;
 import Connections.DAO.GenericDAO;
 import FlowerStore.FlowerStore;
 import FlowerStore.Interfaces.GardenElements;
-import FlowerStore.Products.Decoration;
-import FlowerStore.Products.Flower;
-import FlowerStore.Products.Tree;
 
 import java.sql.*;
 import java.util.*;
@@ -16,7 +13,6 @@ public class GardenElementsMySQL implements GenericDAO {
 
     private static Connection connection;
     private static final String URL = "jdbc:mysql://" + Constants.MYSQL_SERVER + "/" + Constants.MYSQL_DATABASE;
-
 
     public GardenElementsMySQL() {
         try {
@@ -68,76 +64,15 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public GardenElements findById(int id) {
-        GardenElements gardenElement = null;
-        connectMySQL();
-        String query = QueryMySQL.FINDBYID_QUERY;
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                int type = rs.getInt("TypesId");
-                switch (type) {
-                    case 1:
-                        gardenElement = new Tree(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("size"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    case 2:
-                        gardenElement = new Flower(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("color"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    case 3:
-                        gardenElement = new Decoration(
-                                rs.getInt("quantity"),
-                                rs.getInt("idProduct"),
-                                rs.getString("typeMaterial"),
-                                rs.getDouble("price")
-                        );
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid type: " + type);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
-        return gardenElement;
-    }
-
-    @Override
-    public List<GardenElements> allGardenElements(String idFlowerStore) {
+    public List<GardenElements> allGardenElements(FlowerStore flowerStore) {
         List<GardenElements> elements = new ArrayList<>();
         try {
             PreparedStatement pstmt = connection.prepareStatement(QueryMySQL.ALLSTOCK_QUERY);
-            pstmt.setInt(1, Integer.parseInt(idFlowerStore));
+            pstmt.setInt(1, Integer.parseInt(flowerStore.getId()));
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    int type = rs.getInt("TypesId");
-                    switch (type) {
-                        case 1 ->
-                                elements.add(new Tree(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
-
-
-                        case 2 ->
-                                elements.add(new Flower(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
-
-                        case 3 ->
-                                elements.add(new Decoration(rs.getInt("quantity"), rs.getInt("idGardenElements"), rs.getString("features"), rs.getDouble("price")));
-
-                        default -> throw new IllegalArgumentException("Invalid type: " + type);
-                    }
+                    elements.add(flowerStore.createElement(rs.getInt("IdGardenElements"),rs.getInt("idType"),rs.getString("TypeName"),rs.getString("features"),rs.getDouble("Price"),rs.getInt("Quantity")));
                 }
             }
         } catch (SQLException e) {

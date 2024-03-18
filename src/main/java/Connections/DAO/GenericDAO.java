@@ -9,8 +9,7 @@ import java.util.List;
 
 public interface GenericDAO {
         List<FlowerStore> showFlowerStore();
-        GardenElements findById(int id);
-        List<GardenElements> allGardenElements(String idFlowerStore);
+        List<GardenElements> allGardenElements(FlowerStore flowerStore);
         String createStore(String name);
         void addStock(String idFlowerStore, List<GardenElements> products);
         void updateStock(String idFlowerStore, GardenElements gardenElements);
