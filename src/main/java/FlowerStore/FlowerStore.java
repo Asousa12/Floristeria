@@ -14,10 +14,10 @@ public class FlowerStore {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setId(String id){

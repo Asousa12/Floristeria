@@ -259,7 +259,7 @@ public class App {
         String nameStore = InputControl.askNameOnlyLetters("FlowerStore name: ");
         String id;
         id = managerDAO.newStoreManager(nameStore);
-        flowerStore = new FlowerStore(nameStore, id);
+        flowerStore = new FlowerStore(id, nameStore);
         List<GardenElements> products = managerDAO.showStockManager(flowerStore);
         managerDAO.addStockManager(id, products);
         System.out.println("FlowerStore " + nameStore + "is created" );

@@ -61,8 +61,7 @@ public class GardenElementsMongoDB implements GenericDAO {
 //
 //            flowerStores.add(flowerStore);
 
-
-            flowerStores.add(new FlowerStore(doc.getObjectId("_id").toString(), doc.getString("name")));
+            flowerStores.add(new FlowerStore(doc.getObjectId("_id").toHexString(), doc.getString("name")));
         }
 
         return flowerStores;
@@ -74,7 +73,7 @@ public class GardenElementsMongoDB implements GenericDAO {
 
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        Document query = new Document("_id", flowerStore.getId());
+        Document query = new Document("_id", new ObjectId(flowerStore.getId()));
         FindIterable<Document> results = collection.find(query);
 
         //Document res = collection.find(query);
@@ -254,7 +253,7 @@ public class GardenElementsMongoDB implements GenericDAO {
     public void removeFlowerStore(String flowerStoreId) {
         MongoCollection<Document> collection = database.getCollection("FlowerShops");
 
-        Document query = new Document("_id", flowerStoreId);
+        Document query = new Document("_id", new ObjectId(flowerStoreId));
 
         collection.deleteOne(query);
 
