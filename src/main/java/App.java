@@ -70,7 +70,7 @@ public class App {
             }
         }while(opc != 0);
     }
-    private static void runProgram() {
+    public static void runProgram() {
         System.out.println("Working with FlowerStore: " + flowerStore.getName());
         boolean seguirBucle;
         do {
@@ -129,7 +129,6 @@ public class App {
                 if (price > 0) {
                     listaElements.get(opc).setPrice(price);
                 }
-                shopCart.addProductos(listaElements.get(opc), listaElements.get(opc).getQuantity());
                 managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
                 System.out.println("Se han añadido " + listaElements.get(opc).getQuantity() + " productos al stock de la floristería " + flowerStore.getName());
                 waitForContinue();
@@ -163,8 +162,7 @@ public class App {
             } else {
                 throw new NotValidOptionException("Incorrect option!");
             }
-            shopCart.removeProducto(listaElements.get(opc), listaElements.get(opc).getQuantity());
-            managerDAO.deleteStockManager(flowerStore.getId(), listaElements.get(opc));
+            managerDAO.updateStockManager(flowerStore.getId(), listaElements.get(opc));
             System.out.println(stockRemove + " products have been deleted from the " + flowerStore.getName() + " florist's stock.");
             waitForContinue();
         } catch (NotValidOptionException ex) {
@@ -187,16 +185,17 @@ public class App {
     }
     private static void valueTotal(){
         List<GardenElements> listaStock = managerDAO.showStockManager(flowerStore);
-        double total = 0d;
+        double total = 0;
+
         for(GardenElements prod : listaStock){
             total += prod.getPrice() * prod.getQuantity();
+
         }
         System.out.println("The value total of Flower store " + flowerStore.getName() + " is: " + total);
         waitForContinue();
     }
     private static void createTicket() {
         Scanner entrada = new Scanner(System.in);
-        //flowerStore = new FlowerStore(flowerStore.getName(), flowerStore.getId());
         List<GardenElements> gardenElementsList = managerDAO.showStockManager(flowerStore);
 
         System.out.println("The garden elements available are: ");
@@ -217,22 +216,18 @@ public class App {
 
             int quantity = InputControl.requestIntData("Enter quantity:");
 
-            //quantity <= gardenElementsList.get(productId).getQuantity()
-
-            for (GardenElements gardenElements : gardenElementsList) {
-                if (gardenElements.getIdProduct() == productId) {
-                    gardenElements.setQuantity(gardenElements.getQuantity() + quantity);
-                    shopCart.addProductos(gardenElements, quantity);
-                    break;
-                }
+            if(quantity <= gardenElementsList.get(productId).getQuantity()){
+                GardenElements tempGardenElement = gardenElementsList.get(productId);
+                shopCart.addProductos(tempGardenElement,quantity);
+                gardenElementsList.get(productId).setQuantity(gardenElementsList.get(productId).getQuantity()-quantity);
+                managerDAO.updateStockManager(flowerStore.getId(),gardenElementsList.get(productId));
+                System.out.println("Do you want to add more products to the ticket? (yes/no)");
+                String respuesta = entrada.next();
+                addInformation = respuesta.equalsIgnoreCase("yes");
             }
-            System.out.println("Do you want to add more products to the ticket? (yes/no)");
-            String respuesta = entrada.next();
-            addInformation = respuesta.equalsIgnoreCase("yes");
         }
         shopCart.printTicket();
-        managerDAO.newTicketManager(flowerStore, gardenElementsList);
-        //managerDAO.deleteStockManager();
+        managerDAO.newTicketManager(flowerStore, shopCart.getProducts());
         System.out.println("Ticket created successfully.");
         waitForContinue();
     }
