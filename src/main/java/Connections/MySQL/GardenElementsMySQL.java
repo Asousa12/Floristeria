@@ -157,8 +157,8 @@ public class GardenElementsMySQL implements GenericDAO {
     }
 
     @Override
-    public HashMap<Integer, Date> allTickets(String idFlowerStore) {
-        HashMap<Integer, Date> tickets = new HashMap<>();
+    public HashMap<String, Date> allTickets(String idFlowerStore) {
+        HashMap<String, Date> tickets = new HashMap<>();
         connectMySQL();
         String query = QueryMySQL.SHOWALLTICKETS_QUERY;
 
@@ -167,7 +167,7 @@ public class GardenElementsMySQL implements GenericDAO {
             pstmt.setInt(1, Integer.parseInt(idFlowerStore));
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    tickets.put(rs.getInt("IdTicket"), rs.getDate("Date"));
+                    tickets.put(rs.getString("IdTicket"), rs.getDate("Date"));
                 }
             }
         } catch (SQLException e) {

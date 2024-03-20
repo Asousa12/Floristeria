@@ -160,15 +160,15 @@ public class GardenElementsMongoDB implements GenericDAO {
 
 
     @Override
-    public HashMap<Integer, Date> allTickets(String idFlowerStore) {
+    public HashMap<String, Date> allTickets(String idFlowerStore) {
         MongoCollection<Document> collection = database.getCollection("Tickets");
-        HashMap<Integer, Date> ticketsMap = new HashMap<>();
+        HashMap<String, Date> ticketsMap = new HashMap<>();
 
-        Document query = new Document("FlowerStore", idFlowerStore);
+        Document query = new Document("FlowerStore", new ObjectId(idFlowerStore));
         FindIterable<Document> tickets = collection.find(query);
 
         for (Document ticket : tickets) {
-            Integer ticketId = ticket.getInteger("_id");
+            String ticketId = ticket.getObjectId("_id").toHexString();
             Date ticketDate = ticket.getDate("date");
             ticketsMap.put(ticketId, ticketDate);
         }

@@ -35,7 +35,7 @@ public class ManagerDAO {
     public void newTicketManager(FlowerStore flowerStore, List<GardenElements> gardenElementsList){
         genericDAO.addTicket(flowerStore, gardenElementsList);
     }
-    public HashMap<Integer, Date> showAllTicketsManager(String idFlowerStore){
+    public HashMap<String, Date> showAllTicketsManager(String idFlowerStore){
         return genericDAO.allTickets(idFlowerStore);
     }
     public void removeFlowerStore(String flowerStoreId){

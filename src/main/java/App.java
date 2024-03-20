@@ -110,7 +110,8 @@ public class App {
                 break;
             case 8: totalMoneyEarned();
                 break;
-            default: throw new IllegalArgumentException("Invalid option: " + opcion);
+            default:
+                System.out.println("Option no valid!");;
         }
         return seguirBucle;
 
@@ -217,8 +218,9 @@ public class App {
             int quantity = InputControl.requestIntData("Enter quantity:");
 
             if(quantity <= gardenElementsList.get(productId).getQuantity()){
-                GardenElements tempGardenElement = gardenElementsList.get(productId);
-                shopCart.addProductos(tempGardenElement,quantity);
+                GardenElements temp = gardenElementsList.get(productId);
+                GardenElements ticketGarden = flowerStore.createElement(temp.getIdProduct(), temp.getIdType(), temp.getNameType(), temp.getFeatures(), temp.getPrice(), temp.getQuantity());
+                shopCart.addProductos(ticketGarden,quantity);
                 gardenElementsList.get(productId).setQuantity(gardenElementsList.get(productId).getQuantity()-quantity);
                 managerDAO.updateStockManager(flowerStore.getId(),gardenElementsList.get(productId));
                 System.out.println("Do you want to add more products to the ticket? (yes/no)");
@@ -234,12 +236,12 @@ public class App {
 
     private static void oldPurchasesList(){
 
-        HashMap<Integer, Date> tickets = managerDAO.showAllTicketsManager(flowerStore.getId());
+        HashMap<String, Date> tickets = managerDAO.showAllTicketsManager(flowerStore.getId());
         if(tickets.isEmpty()){
             System.out.println("Don't have any ticket created");
         }else {
             System.out.println("Here you have the all tickets:");
-            for (Integer ticketId : tickets.keySet()) {
+            for (String ticketId : tickets.keySet()) {
                 System.out.println("Ticket ID: " + ticketId + ", Date: " + tickets.get(ticketId));
             }
         }
